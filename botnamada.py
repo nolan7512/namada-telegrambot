@@ -206,6 +206,33 @@ def steward(update: Update, context: CallbackContext) -> None:
             update.effective_message.reply_text("Error get data")
     except Exception as e:
         update.effective_message.reply_text(f"Error: {e}")
+        
+def pgf(update: Update, context: CallbackContext) -> None:
+    try:
+        # Lấy thông tin từ endpoint /api/v1/chain/parameter
+        parameter_api_url = 'https://it.api.namada.red/api/v1/chain/parameter'
+        parameter_response = requests.get(parameter_api_url)
+        
+        
+        steward_api_url = 'https://it.api.namada.red/api/v1/chain/pgf/stewards'
+        steward_response = requests.get(steward_api_url)
+        
+        # Kiểm tra xem cả hai request đều thành công
+        if parameter_response.status_code == 200 and steward_response.status_code == 200:
+            parameter_data = parameter_response.json()['parameters']
+            stewards = steward_response.json()['stewards']              
+            # Tạo tin nhắn text với thông tin từ hai nguồn
+            message = f"Epoch: {parameter_data['epoch']}\n"
+            message = f"Total PGF Stewards: {len(stewards)}\n"
+            message += f"PGF Treasury: {parameter_data['pgf_treasury']}\n"
+            message += f"PGF Inflation(%): {parameter_data['pgf_treasury_inflation']}%\n"
+            message += f"Steward Incent/year (%): {parameter_data['pos_inflation']}%\n"         
+            # Gửi tin nhắn
+            update.effective_message.reply_text(message)
+        else:
+            update.effective_message.reply_text("Error get data from API.")
+    except Exception as e:
+        update.effective_message.reply_text(f"Lỗi: {e}")
 
 # Function to handle the /proposalall command
 def proposal_all(update: Update, context: CallbackContext):
@@ -270,7 +297,7 @@ def proposal_voting(update: Update, context: CallbackContext):
             if table:
                 # Split the table into batches
                 count_rows = len(table._rows)
-                batch_size = 25
+                batch_size = 15
                 for start in range(0, count_rows, batch_size):
                     end = min(start + batch_size, count_rows)
                     temp_table = table.get_string(start=start, end=end)
@@ -303,6 +330,7 @@ def main() -> None:
     dp.add_handler(CommandHandler("info", info))
     dp.add_handler(CommandHandler("topvalidator", topvalidators))
     dp.add_handler(CommandHandler("steward", steward))
+    dp.add_handler(CommandHandler("pfg", pgf))
     dp.add_handler(CommandHandler("proposals", proposal_all))
     dp.add_handler(CommandHandler("pendingproposals", proposal_pending))
     dp.add_handler(CommandHandler("votingproposals", proposal_voting))
