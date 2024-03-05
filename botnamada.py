@@ -47,6 +47,47 @@ def status(update: Update, context: CallbackContext):
     else:
         update.effective_message.reply_text("Không thể lấy dữ liệu từ API.")
 
+def info(update: Update, context: CallbackContext) -> None:
+    try:
+        # Lấy thông tin từ endpoint /api/v1/chain/parameter
+        parameter_api_url = 'https://it.api.namada.red/api/v1/chain/parameter'
+        parameter_response = requests.get(parameter_api_url)
+        
+        # Lấy thông tin từ endpoint /api/v1/chain/info
+        info_api_url = 'https://it.api.namada.red/api/v1/chain/info'
+        info_response = requests.get(info_api_url)
+        
+        # Kiểm tra xem cả hai request đều thành công
+        if parameter_response.status_code == 200 and info_response.status_code == 200:
+            parameter_data = parameter_response.json()['parameters']
+            info_data = info_response.json()
+            
+            # Định dạng các giá trị
+            total_native_token_supply = int(parameter_data['total_native_token_supply']) / 1000000
+            total_staked_native_token = int(parameter_data['total_staked_native_token']) / 1000000
+            total_native_token_supply = round(total_native_token_supply, 2)
+            total_staked_native_token = round(total_staked_native_token, 2)
+            block_time = round(info_data['block_time'], 3)
+            
+            # Tạo tin nhắn text với thông tin từ hai nguồn
+            message = f"Epoch: {parameter_data['epoch']}\n"
+            message += f"Block time: {block_time}\n"
+            message += f"Last fetch block height: {info_data['last_fetch_block_height']}\n"
+            message += f"Total transparent txs: {info_data['total_transparent_txs']}\n"
+            message += f"Total shielded txs: {info_data['total_shielded_txs']}\n"
+            message += f"Max validators: {parameter_data['max_validators']}\n"
+            message += f"Total native token supply: {total_native_token_supply}\n"
+            message += f"Total staked native token: {total_staked_native_token}\n"
+            
+            # Gửi tin nhắn
+            update.effective_message.reply_text(message)
+        else:
+            update.effective_message.reply_text("Không thể lấy dữ liệu từ API.")
+    except Exception as e:
+        update.effective_message.reply_text(f"Lỗi: {e}")
+
+
+
 def create_table(data) -> PrettyTable:
     try:
 
@@ -84,7 +125,8 @@ def create_table(data) -> PrettyTable:
 def main() -> None:
     updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler("status", status))
+    dp.add_handler(CommandHandler("topvalidator", status))
+    dp.add_handler(CommandHandler("info", info))
 
 
     # log all errors
