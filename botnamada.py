@@ -157,16 +157,8 @@ def create_table(data, type) -> PrettyTable:
                     table.add_row(row)
             return table
         elif type == "votingproposals":
-            parameter_api_url = 'https://it.api.namada.red/api/v1/chain/parameter'
-            parameter_response = requests.get(parameter_api_url)
-            parameter_data = parameter_response.json()['parameters']
-            epoch = parameter_data['epoch']
-            table = PrettyTable()
-            headers = ["ID", "Kind", "Author", "Start Epoch", "End Epoch", "Grace Epoch", "Result"]
-            table.title = "Pending Proposals"
-            table.field_names = headers
             for proposal in data:
-                if proposal.get("start_epoch", "") == epoch:
+                if proposal.get("start_epoch", "") == "VotingPeriod":
                     author_account = proposal.get("author", {}).get("Account", "")
                     truncated_author_account = author_account[:4] + "..." + author_account[-4:]
                     yay = round(entry['yay_votes'] / 1000000, 2)
@@ -250,7 +242,7 @@ def proposal_pending(update: Update, context: CallbackContext):
         response = requests.get(api_url)
         
         if response.status_code == 200:
-            data = response.json().get("proposals", [])
+            data = response.json()
             table = create_table(data, "proposalpending")
             if table:
                 # Split the table into batches
@@ -274,7 +266,7 @@ def proposal_voting(update: Update, context: CallbackContext):
         response = requests.get(api_url)
         
         if response.status_code == 200:
-            data = response.json().get("proposals", [])
+            data = response.json()
             table = create_table(data, "votingproposals")
             if table:
                 # Split the table into batches
@@ -295,8 +287,8 @@ def proposal_voting(update: Update, context: CallbackContext):
 def help_command(update: Update, context: CallbackContext) -> None:
     help_text = "WELCOME TO NAMADA BOT EXPLORER - ADAMANLABS\n"
     help_text = "List of commands:\n"
-    help_text += "/status - Display voting status of validators\n"
-    help_text += "/info - Display blockchain information\n"
+    help_text += "/info - Display status and information blockchain\n"
+    help_text += "/topvalidator - Display list of Top Validators\n"
     help_text += "/steward - Display list of Stewards\n"
     help_text += "/proposals - Display all governance proposals\n"
     help_text += "/pendingproposals - Display pending governance proposals\n"
@@ -309,8 +301,8 @@ def help_command(update: Update, context: CallbackContext) -> None:
 def main() -> None:
     updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler("topvalidator", status))
     dp.add_handler(CommandHandler("info", info))
+    dp.add_handler(CommandHandler("topvalidator", status))
     dp.add_handler(CommandHandler("steward", steward))
     dp.add_handler(CommandHandler("proposals", proposal_all))
     dp.add_handler(CommandHandler("pendingproposals", proposal_pending))
