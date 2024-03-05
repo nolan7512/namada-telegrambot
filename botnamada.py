@@ -17,7 +17,7 @@ APP_URL = os.environ.get("APP_URL")
 PORT = int(os.environ.get('PORT', '8443'))
 
 # Hàm xử lý command /status
-def status(update: Update, context: CallbackContext):
+def topvalidators(update: Update, context: CallbackContext):
     api_url = 'https://namadafinder.cryptosj.net/sortedResults'
     response = requests.get(api_url)
     
@@ -104,18 +104,18 @@ def create_table(data, type) -> PrettyTable:
         
         if type == "topvalidators":
             table = PrettyTable()
-            headers = ["Address", "Voting Power", "Alias", "Uptime", "Percentage"]
+            headers = ["Address", "Alias", "Voting Power", "Percentage" , "Uptime"]
             table.align["Address"] = "l"
             table.align["Voting Power"] = "l"
             table.align["Alias"] = "l"
-            table.align["Uptime"] = "l"
+            table.align["Uptime(%)"] = "l"
             table.align["Percentage"] = "l"
             table.title = "Top Validators"
             table.field_names = headers
             for entry in data:
                 voting_power = round(entry['votingPower'] / 1000000, 2)
                 truncated_address = entry['address'][:4] + "..." + entry['address'][-4:]
-                table.add_row([truncated_address, voting_power, entry['alias'], entry['uptime'], entry['percentage']])
+                table.add_row([truncated_address, entry['alias'], voting_power, entry['percentage'], entry['uptime'] ])
             return table
         elif type == "proposals":
             table = PrettyTable()
@@ -132,7 +132,7 @@ def create_table(data, type) -> PrettyTable:
                     proposal.get("start_epoch", ""),
                     proposal.get("end_epoch", ""),
                     proposal.get("grace_epoch", ""),
-                    proposal.get("result", ""),
+                    proposal.get("result", "")
                 ]
                 table.add_row(row)
             return table
@@ -152,7 +152,7 @@ def create_table(data, type) -> PrettyTable:
                     proposal.get("start_epoch", ""),
                     proposal.get("end_epoch", ""),
                     proposal.get("grace_epoch", ""),
-                    proposal.get("result", ""),
+                    proposal.get("result", "")
                     ]
                     table.add_row(row)
             return table
@@ -174,7 +174,7 @@ def create_table(data, type) -> PrettyTable:
                     proposal.get("result", ""),
                     yay,
                     nay,
-                    abstain,
+                    abstain
                     ]
                     table.add_row(row)
             return table
@@ -215,7 +215,7 @@ def proposal_all(update: Update, context: CallbackContext):
         response = requests.get(api_url)
         
         if response.status_code == 200:
-            #data = response.json()
+            #data = response.json()[]
             data = response.get("proposals", [])
 
             # Create PrettyTable
@@ -306,7 +306,7 @@ def main() -> None:
     updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("info", info))
-    dp.add_handler(CommandHandler("topvalidator", status))
+    dp.add_handler(CommandHandler("topvalidator", topvalidators))
     dp.add_handler(CommandHandler("steward", steward))
     dp.add_handler(CommandHandler("proposals", proposal_all))
     dp.add_handler(CommandHandler("pendingproposals", proposal_pending))
