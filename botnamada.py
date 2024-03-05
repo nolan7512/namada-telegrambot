@@ -1,18 +1,24 @@
+#!/usr/bin/env python3
+import asyncio
+import logging
+import math
+import os
+import re
+import json
 import requests
-import telegram
-# from telegram import ParseMode
-from telegram.ext import CommandHandler, MessageHandler, Updater, ConversationHandler, CallbackContext
 
-# from telegram import ParseMode, Update
-# from prettytable import PrettyTable
+from prettytable import PrettyTable
+from telegram import ParseMode, Update
+from telegram.ext import CommandHandler, Filters, MessageHandler, Updater, ConversationHandler, CallbackContext
+from datetime import datetime
 
-# TOKEN = os.environ.get("TOKEN")
-# APP_URL = os.environ.get("APP_URL")
-# PORT = int(os.environ.get('PORT', '8443'))
+TOKEN = os.environ.get("TOKEN")
+APP_URL = os.environ.get("APP_URL")
+PORT = int(os.environ.get('PORT', '8443'))
 
 # Hàm xử lý command /status
 def status(update, context):
-    api_url = 'URL của API của bạn'
+    api_url = 'https://namadafinder.cryptosj.net/sortedResults'
     response = requests.get(api_url)
     
     if response.status_code == 200:
@@ -37,8 +43,8 @@ def status(update, context):
     else:
         update.message.reply_text("Không thể lấy dữ liệu từ API.")
 
-def main():
-    updater = Updater("6629578721:AAGvkECryBZSLIhfipPpazqULLXmhjULbpk", use_context=True)
+def main() -> None:
+    updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("status", status))
 
