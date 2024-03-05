@@ -108,8 +108,8 @@ def create_table(data, type) -> PrettyTable:
             table.align["Address"] = "l"
             table.align["Voting Power"] = "l"
             table.align["Alias"] = "l"
-            table.align["Uptime(%)"] = "l"
             table.align["Percentage"] = "l"
+            table.align["Uptime(%)"] = "l"
             table.title = "Top Validators"
             table.field_names = headers
             for entry in data:
@@ -122,7 +122,7 @@ def create_table(data, type) -> PrettyTable:
             headers = ["ID", "Kind", "Author", "Start Epoch", "End Epoch", "Grace Epoch", "Result"]
             table.title = "Proposals"
             table.field_names = headers
-            for proposal in data:
+            for proposal in data["proposals"]:
                 author_account = proposal.get("author", {}).get("Account", "")
                 truncated_author_account = author_account[:4] + "..." + author_account[-4:]
                 row = [
@@ -141,7 +141,7 @@ def create_table(data, type) -> PrettyTable:
             headers = ["ID", "Kind", "Author", "Start Epoch", "End Epoch", "Grace Epoch", "Result"]
             table.title = "Pending Proposals"
             table.field_names = headers
-            for proposal in data:
+            for proposal in data["proposals"]:
                 if proposal.get("result", "") == "Pending":
                     author_account = proposal.get("author", {}).get("Account", "")
                     truncated_author_account = author_account[:4] + "..." + author_account[-4:]       
@@ -157,13 +157,14 @@ def create_table(data, type) -> PrettyTable:
                     table.add_row(row)
             return table
         elif type == "votingproposals":
-            for proposal in data:
-                if proposal.get("start_epoch", "") == "VotingPeriod":
+            table = PrettyTable()
+            for proposal in data["proposals"]:
+                if proposal.get("result", "") == "VotingPeriod":
                     author_account = proposal.get("author", {}).get("Account", "")
                     truncated_author_account = author_account[:4] + "..." + author_account[-4:]
-                    yay = round(entry['yay_votes'] / 1000000, 2)
-                    nay = round(entry['nay_votes'] / 1000000, 2)  
-                    abstain = round(entry['abstain_votes'] / 1000000, 2)         
+                    yay = round(proposal['yay_votes'] / 1000000, 2)
+                    nay = round(proposal['nay_votes'] / 1000000, 2)  
+                    abstain = round(proposal['abstain_votes'] / 1000000, 2)         
                     row = [
                     proposal.get("id", ""),
                     proposal.get("kind", ""),
