@@ -39,9 +39,9 @@ def status(update, context):
         html_message += "</table>"
         
         # Gửi tin nhắn HTML
-        update.message.reply_html(html_message, parse_mode=ParseMode.HTML)
+        update.effective_message.reply_html(html_message, parse_mode=ParseMode.HTML)
     else:
-        update.message.reply_text("Không thể lấy dữ liệu từ API.")
+        update.effective_message.reply_text("Không thể lấy dữ liệu từ API.")
 
 def main() -> None:
     updater = Updater(TOKEN, use_context=True)
