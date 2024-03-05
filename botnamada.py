@@ -23,23 +23,22 @@ def status(update: Update, context: CallbackContext):
     
     if response.status_code == 200:
         data = response.json()
-        html_message = "<b>Status</b>\n"
-        html_message += "<table border='1'><tr><th>Address</th><th>Voting Power</th><th>Proposer Priority</th><th>Alias</th><th>Uptime</th><th>Percentage</th></tr>"
+        
+        # Create a PrettyTable instance
+        table = PrettyTable()
+        table.field_names = ["Address", "Voting Power", "Proposer Priority", "Alias", "Uptime", "Percentage"]
+        
+        # Add data to the table
         for entry in data:
             voting_power = entry['votingPower'] / 6
             truncated_address = entry['address'][:4] + "..." + entry['address'][-4:]
-            html_message += "<tr>"
-            html_message += f"<td>{truncated_address}</td>"
-            html_message += f"<td>{voting_power}</td>"
-            html_message += f"<td>{entry['proposerPriority']}</td>"
-            html_message += f"<td>{entry['alias']}</td>"
-            html_message += f"<td>{entry['uptime']}</td>"
-            html_message += f"<td>{entry['percentage']}</td>"
-            html_message += "</tr>"
-        html_message += "</table>"
+            table.add_row([truncated_address, voting_power, entry['proposerPriority'], entry['alias'], entry['uptime'], entry['percentage']])
         
-        # Gửi tin nhắn HTML
-        update.effective_message.reply_text(html_message, parse_mode=ParseMode.HTML)
+        # Format the PrettyTable output as HTML inside a <pre> tag
+        part_temp_table = f'<pre>{table.get_html_string()}</pre>'
+        
+        # Send the HTML-formatted table as a message
+        update.effective_message.reply_text(part_temp_table, parse_mode=ParseMode.HTML)
     else:
         update.effective_message.reply_text("Không thể lấy dữ liệu từ API.")
 
