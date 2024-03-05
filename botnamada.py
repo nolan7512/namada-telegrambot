@@ -39,7 +39,7 @@ def status(update, context):
         html_message += "</table>"
         
         # Gửi tin nhắn HTML
-        update.message.reply_html(html_message, parse_mode=telegram.ParseMode.HTML)
+        update.message.reply_html(html_message, parse_mode=ParseMode.HTML)
     else:
         update.message.reply_text("Không thể lấy dữ liệu từ API.")
 
