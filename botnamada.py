@@ -112,7 +112,7 @@ def create_table(data) -> PrettyTable:
         table.title = "Top Validators"
         table.field_names = headers
         for entry in data:
-            voting_power = entry['votingPower'] / 6
+            voting_power = entry['votingPower'] / 1000000
             truncated_address = entry['address'][:4] + "..." + entry['address'][-4:]
             table.add_row([truncated_address, voting_power, entry['alias'], entry['uptime'], entry['percentage']])
         
