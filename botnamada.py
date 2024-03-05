@@ -17,7 +17,7 @@ APP_URL = os.environ.get("APP_URL")
 PORT = int(os.environ.get('PORT', '8443'))
 
 # Hàm xử lý command /status
-def status(update, context):
+def status(update: Update, context: CallbackContext):
     api_url = 'https://namadafinder.cryptosj.net/sortedResults'
     response = requests.get(api_url)
     
@@ -39,7 +39,7 @@ def status(update, context):
         html_message += "</table>"
         
         # Gửi tin nhắn HTML
-        update.effective_message.reply_html(html_message, parse_mode=ParseMode.HTML)
+        update.effective_message.reply_text(html_message, parse_mode=ParseMode.HTML)
     else:
         update.effective_message.reply_text("Không thể lấy dữ liệu từ API.")
 
