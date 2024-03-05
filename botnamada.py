@@ -158,6 +158,9 @@ def create_table(data, type) -> PrettyTable:
             return table
         elif type == "votingproposals":
             table = PrettyTable()
+            headers = ["ID", "Kind", "Author", "Start Epoch", "End Epoch", "Grace Epoch", "Result", "Yay", "Nay", "Abstain" ]
+            table.title = "Voting Period - Proposals"
+            table.field_names = headers
             for proposal in data["proposals"]:
                 if proposal.get("result", "") == "VotingPeriod":
                     author_account = proposal.get("author", {}).get("Account", "")
@@ -181,9 +184,7 @@ def create_table(data, type) -> PrettyTable:
             return table
         else:
             raise ValueError("Invalid type")
-       
-        
-        
+         
     except Exception as e:
         print(f"Error creating table: {e}")
         return None
@@ -216,8 +217,7 @@ def proposal_all(update: Update, context: CallbackContext):
         response = requests.get(api_url)
         
         if response.status_code == 200:
-            #data = response.json()[]
-            data = response.get("proposals", [])
+            data = response.json()
 
             # Create PrettyTable
             table = create_table(data,"proposals")
@@ -244,8 +244,7 @@ def proposal_pending(update: Update, context: CallbackContext):
         response = requests.get(api_url)
         
         if response.status_code == 200:
-            #data = response.json()
-            data = response.get("proposals", [])
+            data = response.json()
 
             table = create_table(data, "proposalpending")
 
