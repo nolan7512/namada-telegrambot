@@ -34,11 +34,18 @@ def status(update: Update, context: CallbackContext):
             truncated_address = entry['address'][:4] + "..." + entry['address'][-4:]
             table.add_row([truncated_address, voting_power, entry['proposerPriority'], entry['alias'], entry['uptime'], entry['percentage']])
         
-        # Format the PrettyTable output as plain text
-        plain_text_table = table.get_string()
-        
-        # Send the plain text table as a message
-        update.effective_message.reply_text(plain_text_table)
+        # Split the table into batches
+        count_rows = len(table._rows)
+        batch_size = 20
+        for start in range(0, count_rows, batch_size):
+            end = min(start + batch_size, count_rows)
+            batch_table = table[start:end]
+            
+            # Format the batch table as plain text
+            plain_text_table = batch_table.get_string()
+            
+            # Send the plain text table as a message
+            update.effective_message.reply_text(plain_text_table)
     else:
         update.effective_message.reply_text("Không thể lấy dữ liệu từ API.")
 
