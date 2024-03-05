@@ -215,8 +215,9 @@ def proposal_all(update: Update, context: CallbackContext):
         response = requests.get(api_url)
         
         if response.status_code == 200:
-            data = response.json()
-        
+            #data = response.json()
+            data = response.get("proposals", [])
+
             # Create PrettyTable
             table = create_table(data,"proposals")
             if table:
@@ -242,8 +243,11 @@ def proposal_pending(update: Update, context: CallbackContext):
         response = requests.get(api_url)
         
         if response.status_code == 200:
-            data = response.json()
+            #data = response.json()
+            data = response.get("proposals", [])
+
             table = create_table(data, "proposalpending")
+
             if table:
                 # Split the table into batches
                 count_rows = len(table._rows)
