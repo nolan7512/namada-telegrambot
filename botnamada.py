@@ -122,17 +122,17 @@ def create_table(data, type) -> PrettyTable:
             headers = ["ID", "Kind", "Author", "Start Epoch", "End Epoch", "Grace Epoch", "Result"]
             table.title = "Proposals"
             table.field_names = headers
-            for proposal in data["proposals"]:
-                author_account = proposal.get("author", {}).get("Account", "")
+            for entry in data:
+                author_account = entry.get("author", {}).get("Account", "")
                 truncated_author_account = author_account[:4] + "..." + author_account[-4:]
                 row = [
-                    proposal.get("id", ""),
-                    proposal.get("kind", ""),
+                    entry.get("id", ""),
+                    entry.get("kind", ""),
                     truncated_author_account,
-                    proposal.get("start_epoch", ""),
-                    proposal.get("end_epoch", ""),
-                    proposal.get("grace_epoch", ""),
-                    proposal.get("result", "")
+                    entry.get("start_epoch", ""),
+                    entry.get("end_epoch", ""),
+                    entry.get("grace_epoch", ""),
+                    entry.get("result", "")
                 ]
                 table.add_row(row)
             return table
@@ -141,18 +141,18 @@ def create_table(data, type) -> PrettyTable:
             headers = ["ID", "Kind", "Author", "Start Epoch", "End Epoch", "Grace Epoch", "Result"]
             table.title = "Pending Proposals"
             table.field_names = headers
-            for proposal in data["proposals"]:
-                if proposal.get("result", "") == "Pending":
-                    author_account = proposal.get("author", {}).get("Account", "")
+            for entry in data:
+                if entry.get("result", "") == "Pending":
+                    author_account = entry.get("author", {}).get("Account", "")
                     truncated_author_account = author_account[:4] + "..." + author_account[-4:]       
                     row = [
-                    proposal.get("id", ""),
-                    proposal.get("kind", ""),
+                    entry.get("id", ""),
+                    entry.get("kind", ""),
                     truncated_author_account,
-                    proposal.get("start_epoch", ""),
-                    proposal.get("end_epoch", ""),
-                    proposal.get("grace_epoch", ""),
-                    proposal.get("result", "")
+                    entry.get("start_epoch", ""),
+                    entry.get("end_epoch", ""),
+                    entry.get("grace_epoch", ""),
+                    entry.get("result", "")
                     ]
                     table.add_row(row)
             return table
@@ -161,24 +161,21 @@ def create_table(data, type) -> PrettyTable:
             headers = ["ID", "Kind", "Author", "Start Epoch", "End Epoch", "Grace Epoch", "Result", "Yay", "Nay", "Abstain" ]
             table.title = "Voting Period - Proposals"
             table.field_names = headers
-            for proposal in data["proposals"]:
-                if proposal.get("result", "") == "VotingPeriod":
-                    author_account = proposal.get("author", {}).get("Account", "")
-                    truncated_author_account = author_account[:4] + "..." + author_account[-4:]
-                    yay = round(proposal['yay_votes'] / 1000000, 2)
-                    nay = round(proposal['nay_votes'] / 1000000, 2)  
-                    abstain = round(proposal['abstain_votes'] / 1000000, 2)         
+            for entry in data:
+                if entry.get("result", "") == "VotingPeriod":
+                    author_account = entry.get("author", {}).get("Account", "")
+                    truncated_author_account = author_account[:4] + "..." + author_account[-4:]      
                     row = [
-                    proposal.get("id", ""),
-                    proposal.get("kind", ""),
+                    entry.get("id", ""),
+                    entry.get("kind", ""),
                     truncated_author_account,
-                    proposal.get("start_epoch", ""),
-                    proposal.get("end_epoch", ""),
-                    proposal.get("grace_epoch", ""),
-                    proposal.get("result", ""),
-                    yay,
-                    nay,
-                    abstain
+                    entry.get("start_epoch", ""),
+                    entry.get("end_epoch", ""),
+                    entry.get("grace_epoch", ""),
+                    entry.get("result", ""),
+                    round(float(entry.get("yay_votes", 0)) / 1000000, 2),
+                    round(float(entry.get("nay_votes", 0)) / 1000000, 2),
+                    round(float(entry.get("abstain_votes", 0)) / 1000000, 2)
                     ]
                     table.add_row(row)
             return table
@@ -217,7 +214,7 @@ def proposal_all(update: Update, context: CallbackContext):
         response = requests.get(api_url)
         
         if response.status_code == 200:
-            data = response.json()
+            data = response.json()["proposals"]
 
             # Create PrettyTable
             table = create_table(data,"proposals")
@@ -244,10 +241,8 @@ def proposal_pending(update: Update, context: CallbackContext):
         response = requests.get(api_url)
         
         if response.status_code == 200:
-            data = response.json()
-
+            data = response.json()["proposals"]
             table = create_table(data, "proposalpending")
-
             if table:
                 # Split the table into batches
                 count_rows = len(table._rows)
@@ -270,7 +265,7 @@ def proposal_voting(update: Update, context: CallbackContext):
         response = requests.get(api_url)
         
         if response.status_code == 200:
-            data = response.json()
+            data = response.json()["proposals"]
             table = create_table(data, "votingproposals")
             if table:
                 # Split the table into batches
