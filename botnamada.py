@@ -308,6 +308,7 @@ def main() -> None:
     dp.add_handler(CommandHandler("pendingproposals", proposal_pending))
     dp.add_handler(CommandHandler("votingproposals", proposal_voting))
     dp.add_handler(CommandHandler("help", help_command))
+    dp.add_handler(CommandHandler("start", help_command))
     # log all errors
     # dp.add_error_handler(error)
 
