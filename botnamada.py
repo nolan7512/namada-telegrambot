@@ -312,16 +312,18 @@ def proposal_voting(update: Update, context: CallbackContext):
 
 def help_command(update: Update, context: CallbackContext) -> None:
     help_text = "WELCOME TO NAMADA BOT EXPLORER - ADAMANLABS\n"
-    help_text = "List of commands:\n"
+    help_text += "=================================================================\n"
+    help_text += "List of commands:\n"
     help_text += "/info - Display status and information blockchain\n"
-    help_text += "/topvalidator - Display list of Top Validators\n"
+    help_text += "/topvalidator - Display list of Top 100 Validators\n"
     help_text += "/steward - Display list of Stewards\n"
     help_text += "/pgf - Display infomation of PGF\n"
     help_text += "/proposals - Display all governance proposals\n"
-    help_text += "/pendingproposals - Display pending governance proposals\n"
-    help_text += "/votingproposals - Display voting governance proposals\n"
+    help_text += "/pendingproposals - Display pending proposals\n"
+    help_text += "/votingproposals - Display voting proposals\n"
     help_text += "/help - Display list of commands and descriptions\n"
-    help_text += "Adamanlab - tpknam1qr0f3m6cjs5taskgy4q2x0pa2frv0f055p42t3rjdvl79sl0hxplgquqlx9 "
+    help_text += "====================================================================\n"
+    help_text += "tpknam1qr0f3m6cjs5taskgy4q2x0pa2frv0f055p42t3rjdvl79sl0hxplgquqlx9"
     update.effective_message.reply_text(help_text)
 
 
