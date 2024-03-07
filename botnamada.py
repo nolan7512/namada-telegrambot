@@ -316,6 +316,7 @@ def help_command(update: Update, context: CallbackContext) -> None:
     help_text += "/info - Display status and information blockchain\n"
     help_text += "/topvalidator - Display list of Top Validators\n"
     help_text += "/steward - Display list of Stewards\n"
+    help_text += "/pgf - Display infomation of PGF\n"
     help_text += "/proposals - Display all governance proposals\n"
     help_text += "/pendingproposals - Display pending governance proposals\n"
     help_text += "/votingproposals - Display voting governance proposals\n"
@@ -330,7 +331,7 @@ def main() -> None:
     dp.add_handler(CommandHandler("info", info))
     dp.add_handler(CommandHandler("topvalidator", topvalidators))
     dp.add_handler(CommandHandler("steward", steward))
-    dp.add_handler(CommandHandler("pfg", pgf))
+    dp.add_handler(CommandHandler("pgf", pgf))
     dp.add_handler(CommandHandler("proposals", proposal_all))
     dp.add_handler(CommandHandler("pendingproposals", proposal_pending))
     dp.add_handler(CommandHandler("votingproposals", proposal_voting))
