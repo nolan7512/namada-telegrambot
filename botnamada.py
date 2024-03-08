@@ -372,10 +372,12 @@ def search_player(update: Update, context: CallbackContext) -> None:
         if response.status_code == 200:
             data = response.json()["players"]
             if data:
+                
                 player_info = data[0]  # Get the information of the first player in the list
+                formatted_score = "{:,}".format(player_info['score'])
                 message = f"Moniker: {player_info['moniker']}\n"
                 message += f"Player Address: {player_info['player_address']}\n"
-                message += "Score: {:,}\n".format(player_info['score'])
+                message += f"Score: {formatted_score}\n"
                 message += f"Ranking Position: {player_info['ranking_position']}\n"
                 message += f"Avatar URL: {player_info['avatar_url']}\n"
                 message += f"Is Banned: {player_info['is_banned']}\n"
