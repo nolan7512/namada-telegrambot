@@ -148,6 +148,7 @@ def info(update: Update, context: CallbackContext) -> None:
             
            # Create text messages with information from two sources
             # message = f"Epoch: {parameter_data['epoch']}\n"
+            message = f"\n"
             message += f"Block time: {block_time}\n"
             message += f"Latest block height: {latest_block_height}\n"
             message += f"Latest block time (UTC): {latest_block_time}\n"
