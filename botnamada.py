@@ -124,29 +124,43 @@ def info(update: Update, context: CallbackContext) -> None:
       # Get information from endpoint /api/v1/chain/info
         info_api_url = 'https://it.api.namada.red/api/v1/chain/info'
         info_response = requests.get(info_api_url)
+
+         # Get information from endpoint /api/v1/chain/info
+        info_cosapi_url = 'https://rpc-namada.cosmostation.io/status'
+        info_response_status = requests.get(info_api_url)
         
        # Check that both requests were successful
-        if parameter_response.status_code == 200 and info_response.status_code == 200:
+        if parameter_response.status_code == 200 and info_response.status_code == 200 and info_response_status.status_code == 200  :
             parameter_data = parameter_response.json()['parameters']
             info_data = info_response.json()
-            
+            info_response_status_data = info_response_status.json()['result']
             # Format values
             total_native_token_supply = int(parameter_data['total_native_token_supply']) / 1000000
             total_staked_native_token = int(parameter_data['total_staked_native_token']) / 1000000
             total_native_token_supply = round(total_native_token_supply, 2)
             total_staked_native_token = round(total_staked_native_token, 2)
             block_time = round(info_data['block_time'], 3)
+            # Add latest_block_height and latest_block_time to the message
+            latest_block_height = info_response_status_data['sync_info']['latest_block_height']
+            latest_block_time = info_response_status_data['sync_info']['latest_block_time'][:-4]  # Remove milliseconds and 'Z' at the end
+            
+             
             
            # Create text messages with information from two sources
-            message = f"Epoch: {parameter_data['epoch']}\n"
+            # message = f"Epoch: {parameter_data['epoch']}\n"
             message += f"Block time: {block_time}\n"
-            message += f"Last fetch block height: {info_data['last_fetch_block_height']}\n"
+            message += f"Latest block height: {latest_block_height}\n"
+            message += f"Latest block time (UTC): {latest_block_time}\n"
+            # message += f"Last fetch block height: {info_data['last_fetch_block_height']}\n"
             message += f"Total transparent txs: {info_data['total_transparent_txs']}\n"
             message += f"Total shielded txs: {info_data['total_shielded_txs']}\n"
             message += f"Max validators: {parameter_data['max_validators']}\n"
             message += f"Total native token supply: {total_native_token_supply}\n"
             message += f"Total staked native token: {total_staked_native_token}\n"
             
+
+
+
             # Send Message
             update.effective_message.reply_text(message)
         else:
