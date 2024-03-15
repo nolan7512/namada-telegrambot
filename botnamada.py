@@ -127,7 +127,7 @@ def info(update: Update, context: CallbackContext) -> None:
 
          # Get information from endpoint /api/v1/chain/info
         info_cosapi_url = 'https://rpc-namada.cosmostation.io/status'
-        info_response_status = requests.get(info_api_url)
+        info_response_status = requests.get(info_cosapi_url)
         
        # Check that both requests were successful
         if parameter_response.status_code == 200 and info_response.status_code == 200 and info_response_status.status_code == 200  :
